@@ -40,7 +40,7 @@ Este é um projeto Python 3 que lida com cotações de mercado e informações r
 ## Uso
 
 ```bash
-pyhton3 main.py
+python3 main.py
 
 ```
 
