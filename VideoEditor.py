@@ -13,7 +13,7 @@ class VideoEditor:
         self.config = configparser.ConfigParser()
         self.config.read(config_file)
         self.outputDir = self.config["General"]["OutputDirectory"]
-        self.image_clip_duration = 5
+        self.image_clip_duration = 3
         self.startTime = time.time()
         self.imagens_dir = 'imagens'
         self.screen_shot_files = []
@@ -23,7 +23,8 @@ class VideoEditor:
         self.bgCount = len(self.bgFiles)
         self.bgIndex = random.randint(1, self.bgCount-1)
         self.backgroundVideo = VideoFileClip(
-            filename=f"{self.bgDir}/{self.bgPrefix}{self.bgIndex}.mp4", 
+            # filename=f"{self.bgDir}/{self.bgPrefix}{self.bgIndex}.mp4", 
+            filename=f"{self.bgDir}/background_completo_90.mp4", 
             audio=False).subclip(0, len(self.screen_shot_files) * self.image_clip_duration)
         self.w, self.h = self.backgroundVideo.size
         self.margin_size = int(self.config["Video"]["MarginSize"])
@@ -31,7 +32,10 @@ class VideoEditor:
 
     def load_screen_shot_files(self):
         if os.path.exists(self.imagens_dir) and os.path.isdir(self.imagens_dir):
-            for filename in os.listdir(self.imagens_dir):
+            # Listar arquivos no diretório e ordenar alfabeticamente
+            files = sorted(os.listdir(self.imagens_dir))
+            # Iterar sobre os arquivos ordenados
+            for filename in files:
                 if filename.lower().endswith(('.jpg', '.jpeg', '.png')):
                     self.screen_shot_files.append(os.path.join(self.imagens_dir, filename))
 
@@ -55,7 +59,8 @@ class VideoEditor:
         content_overlay = concatenate_videoclips(clips).set_position(("center", "center"))
 
         videoClipToComposite = VideoFileClip(
-            filename=f"{self.bgDir}/{self.bgPrefix}{self.bgIndex}.mp4", 
+            # filename=f"{self.bgDir}/{self.bgPrefix}{self.bgIndex}.mp4",
+            filename=f"{self.bgDir}/background_completo_90.mp4",  
             audio=False).subclip(0, clip_duration)
 
         # ------------------- incio adição dos textos e emojis -------------------

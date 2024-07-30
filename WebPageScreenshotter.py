@@ -1,3 +1,5 @@
+import time
+from urllib.parse import urlparse
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
@@ -15,12 +17,25 @@ class WebPageScreenshotter:
     def capture_screenshots(self, element_class):
         try:
             self.driver.get(self.url)
+            
+            parsed_url = urlparse(self.url)
+            path_segments = parsed_url.path.split("/")
+            # Pegue a última parte do caminho
+            last_path_segment = path_segments[-1]
 
-            # Remover elementos com a classe 'ver-outras'
+            # Remover elementos com a classe 'mostrar-historico'
             self.driver.execute_script("""
-            var elements = document.querySelectorAll('.ver-outras');
+            var elements = document.querySelectorAll('.mostrar-historico');
             elements.forEach(function(el) {
                 el.parentNode.removeChild(el);
+            });
+            """)
+
+            # Remover elementos com a classe 'mostrar-historico'
+            self.driver.execute_script("""
+            var elementosDeTexto = document.querySelectorAll("tr, td");
+            elementosDeTexto.forEach(function(elemento) {
+                elemento.style.fontWeight = "bold";
             });
             """)
 
@@ -33,7 +48,9 @@ class WebPageScreenshotter:
 
                 # Tirar um print de cada elemento encontrado
                 for i, element in enumerate(elements, start=1):
-                    filename = f"imagens/{element_class}_{i}.png"
+                    filename = f"imagens/{last_path_segment}_{element_class}_{i}.png"
+                    self.driver.execute_script("arguments[0].scrollIntoView();", element)
+                    time.sleep(1)
                     element.screenshot(filename)
                     print(f"Screenshot salvo: {filename}")
             else:
